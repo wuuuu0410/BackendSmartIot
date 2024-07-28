@@ -1,0 +1,96 @@
+前端: 
+
+  用戶: 
+
+    設備控制:
+      - 開關控制
+      - 參數調節
+      - 模式選擇
+    即時顯示:
+      - 溫濕度等參數
+      - 設備狀態
+      - 耗電量
+    警報和通知中心: 
+      - 通知中心
+
+  管理員: 
+
+    設備管理: 
+      - 添加設備
+      - 移除設備
+      - 設備配置
+    系統監控: 
+      - 日誌、錯誤日誌
+      - 性能監控(設備參數)
+    系統設置: 
+      - 全局參數設置
+      - 全局通知
+
+# Spring Boot:3.3.1, Gradle:8, JAVA_17
+後端: 
+  SmartIotApplication
+  controller: 
+    - AirConditionerController
+    - AirPurifierController
+    - DehimidifierController
+    - DeviceController
+    - PowerController
+    - HistoryController
+    - LightController
+    - RoomController
+    - PowerController
+  entity: 
+    - Device
+    - Room
+    - AirConditioner
+    - AirPurifier
+    - Dehumidifier
+    - Light
+    - History
+    - Announcement
+  constant:
+    - ResMsg
+    - AirConditionerConstants
+    - AirConditionerResponseMessage
+  repository:
+    - AirConditionerRepository
+    - AirPurifierRepository
+    - DehumidifierRepository
+    - DeviceRepository
+    - HistoryRepository
+    - LightRepository
+    - RoomRepository
+    - AnnouncementRepository
+  service:
+    ifs:
+      - AirConditionerService
+      - AirPurifierService
+      - DehumidifierService
+      - HistoryService
+      - LightService
+      - RoomService
+      - AnnouncementService
+      - PowerService
+      - RoomService
+    impl:
+      - AirConditionerServiceImpl
+      - AirPurifierServiceImpl
+      - DehumidifierServiceImpl
+      - HistoryServiceImpl
+      - LightServiceImpl
+      - RoomServiceImpl
+      - DeviceServiceImpl
+      - AnnouncementServiceImpl
+      - PowerServiceImpl
+  vo:
+    - AirConditionerReq
+    - AirConditionerRes
+    - DeviceReq
+    - RoomReq
+    - AnnouncementRes
+    - AnnouncementReq
+  simulator:
+    - AirConditionerSignalSimulator
+    - AirPurifierSignalSimulator
+    - DehumidifierSignalSimulator
+  

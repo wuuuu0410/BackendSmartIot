@@ -1,0 +1,83 @@
+用於產生假資料
+
+request body:
+{
+    "deviceId": 15,
+    "eventTime": "{{eventTime}}",
+    "eventType": "設備開關",
+    "detail": {
+        "deviceType": "空氣清淨機",
+        "roomArea": "602",
+        "deviceName": "空氣清淨機03",
+        "roomName": "公共區域01",
+        "status": "{{status}}"
+    }
+}
+
+script:
+let currentDate = new Date();
+let currentYear = currentDate.getFullYear();
+
+let currentIndex = pm.environment.get("currentIndex") || 0;
+currentIndex = parseInt(currentIndex);
+
+let eventTimes = [];
+
+// 定義每個月開關事件的時間間隔，隨著月份遞增
+const eventIntervals = [
+    { minHours: 3, maxHours: 10 },  // 1月
+    { minHours: 4, maxHours: 11 },  // 2月
+    { minHours: 5, maxHours: 12 },  // 3月
+    { minHours: 6, maxHours: 13 },  // 4月
+    { minHours: 7, maxHours: 14 },  // 5月
+    { minHours: 8, maxHours: 15 },  // 6月
+    { minHours: 9, maxHours: 16 }   // 7月
+];
+
+// 定義開始日期和結束日期
+let startDate = new Date(currentYear, 0, 1); // 1月1日
+let endDate = new Date(currentYear, 6, 23); // 7月23日
+
+// 從1月1日到7月23日每天生成事件
+for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+    // 獲取當前日期的月份
+    let month = date.getMonth();
+    let day = date.getDate();
+
+    // 隨機生成開的時間
+    function getRandomInterval(minHours, maxHours) {
+        let randomHours = Math.floor(Math.random() * (maxHours - minHours + 1) + minHours);
+        return randomHours * 60 * 60 * 1000;
+    }
+
+    let { minHours, maxHours } = eventIntervals[month];
+    let randomIntervalOpen = getRandomInterval(minHours, maxHours);
+    let eventTimeOpen = new Date(currentYear, month, day, 0, 0, 0, currentDate.getMilliseconds() + randomIntervalOpen);
+    let eventTimeFormattedOpen = eventTimeOpen.toISOString();
+
+    // 隨機生成關的時間
+    let randomIntervalClose = getRandomInterval(minHours, maxHours);
+    let eventTimeClose = new Date(eventTimeOpen.getTime() + randomIntervalClose);
+    let eventTimeFormattedClose = eventTimeClose.toISOString();
+
+    // 將生成的事件時間加入eventTimes數組
+    eventTimes.push({ eventTime: eventTimeFormattedOpen, status: "開" });
+    eventTimes.push({ eventTime: eventTimeFormattedClose, status: "關" });
+}
+
+// 將所有eventTimes設置為環境變量
+pm.environment.set("eventTimes", JSON.stringify(eventTimes));
+
+// 設置當前記錄的eventTime和status
+let currentRecord = JSON.parse(pm.environment.get("eventTimes"))[currentIndex];
+pm.environment.set("eventTime", currentRecord.eventTime);
+pm.environment.set("status", currentRecord.status);
+
+// 更新索引
+let nextIndex = (currentIndex + 1) % (eventTimes.length);
+pm.environment.set("currentIndex", nextIndex);
+
+// 輸出到控制台以便查看
+console.log("Generated eventTime:", currentRecord.eventTime);
+console.log("Generated status:", currentRecord.status);
+console.log("Current index:", currentIndex);
